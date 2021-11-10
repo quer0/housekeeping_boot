@@ -19,8 +19,6 @@
 
   - name: Delete old kernels output 
     debug: msg="{{ output.stdout }}"
-  #- name: Delete old kernels output
-    #debug: var=output
   
   - name: Find kdump files
     find:
