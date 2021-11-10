@@ -1,0 +1,48 @@
+---
+- name: Housekeeping on /boot 
+  hosts: PW
+  remote_user: root 
+
+  tasks: 
+
+  - name: Check and print disk usage on /boot 
+    command: df -h /boot
+    register: output
+  
+  - name: Show resoult of df before housekeeping
+    debug: msg="{{ output.stdout }}"
+
+  - name: Delete old kernels
+    command: package-cleanup --oldkernels --count=1 -y
+    register: output
+    become: yes
+
+  - name: Delete old kernels output 
+    debug: msg="{{ output.stdout }}"
+  #- name: Delete old kernels output
+    #debug: var=output
+  
+  - name: Find kdump files
+    find:
+      paths: /boot
+      patterns: "*kdump.img"
+    register: fdel
+
+  - name: Remove file kdump's
+    file:
+     path: "{{ item['path'] }}"
+     state: absent
+     #force: yes
+    with_items: "{{ fdel.files }}"
+    become: yes
+
+  - name: Space after housekeeping 
+    command: df -h /boot
+    register: output 
+
+  - name: Space after delete old kernels output
+    debug: msg="{{ output.stdout }}"
+
+
+
+#yum install kernel-3.10.0-1160.2.1.el7.x86_64 -y
