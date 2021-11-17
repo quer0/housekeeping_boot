@@ -1,7 +1,6 @@
 ---
 - name: Housekeeping on /boot 
-  hosts: PW
-  remote_user: root 
+  hosts: PW 
 
   tasks: 
 
